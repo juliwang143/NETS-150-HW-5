@@ -1,0 +1,12 @@
+{
+    "maven.view": "hierarchical",
+    "java.project.referencedLibraries": {
+        "include": [
+            "lib/**/*.jar",
+            "/Users/juliawang/Downloads/jsoup-1.15.4.jar"
+        ],
+        "exclude": [
+            "/Users/juliawang/Downloads/json-20230227-javadoc.jar"
+        ]
+    }
+}
