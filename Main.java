@@ -53,7 +53,42 @@ public class Main {
             System.out.println(movieID);
 
             Webscraper ws = new Webscraper();
+
+            // Testing getMovieCast()
+            // ws.getMovieCast("tt11286314");
+
             // ws.getMovieCast(movieID);
+
+
+            // Testing isActorInMovie
+            // boolean isActorInMovie = ws.isActorInMovie("https://www.imdb.com/title/tt11286314", "Jennifer Lawrence");
+            // System.out.println(isActorInMovie);
+
+            // Testing getMostPopularColleagues
+            // ws.getMostPopularColleagues("/name/nm0000288/?ref_=tt_cl_t_1", "Christian Bale");
+
+            // ws.getMostPopularColleagues2("/name/nm2225369/?ref_=tt_cl_t_2", "Jennifer Lawrence");
+
+            // ws.getMostPopularColleagues2("/name/nm2225369/?ref_=tt_cl_t_2", "Jennifer Lawrence");
+
+            // TODO tested
+            // ws.getMostPopularColleagues2("/name/nm2225369/?ref_=tt_cl_t_2", "Jennifer Lawrence");
+
+            // ws.getMostPopularColleagues("/name/nm0000158/?ref_=nv_sr_srsg_1_tt_2_nm_5_q_tom%2520han", "Tom Hanks");
+
+
+
+            // TODO testing getActorUrl
+            // System.out.println(ws.getActorUrl("Meg Ryan", "tt0098635"));
+            // System.out.println(ws.getActorUrl("Josh Hutcherson", "tt1392170"));
+            // System.out.println(ws.getActorUrl("Kate Winslet", "tt0120338"));
+
+
+            // TODO testing actorsBothActorsWorkedWith2
+            // ws.actorsBothActorsWorkedWith2("Meg Ryan", "Kate Winslet", "tt0098635", "tt0120338");
+
+
+
 
             // ws.getMostPopularColleagues("/name/nm0000288/?ref_=tt_cl_t_1", "Christian Bale");
 
@@ -64,7 +99,33 @@ public class Main {
             // ws.getMostPopularColleagues("/name/nm0000158/?ref_=nv_sr_srsg_1_tt_2_nm_5_q_tom%2520han", "Tom Hanks");
 
             // TODO doesn't work
-            ws.getMostPopularColleagues("/name/nm0000212/?ref_=nv_sr_srsg_0_tt_0_nm_8_q_meg%2520r", "Meg Ryan");
+            // ws.getMostPopularColleagues("/name/nm0000212/?ref_=nv_sr_srsg_0_tt_0_nm_8_q_meg%2520r", "Meg Ryan");
+
+
+            //
+            // System.out.println(ws.getActorUrl("Meg Ryan", "tt0098635"));
+
+
+            ws.moviesActorsInTogether2("Josh Hutcherson", "Jennifer Lawrence", "tt1392170", "tt1392170"); 
+
+            // ws.moviesActorsInTogether2("Meg Ryan", "Tom Hanks", "/name/nm0000212/?ref_=tt_cl_t_2", "/name/nm0000158/?ref_=nv_sr_srsg_1_tt_2_nm_5_q_tom%2520han"); 
+
+
+            // TODO not finished
+            // ws.moviesActorsInTogether("Meg Ryan", "Billy Crystal", "/name/nm0000212/?ref_=tt_cl_t_2", "name/nm0000345/?ref_=tt_cl_t_1"); 
+
+
+
+            // Testing revised method
+            // TODO
+            // ws.getMovieCast2(movieID);
+
+            // ws.moviesActorsInTogether2("Meg Ryan", "Tom Hanks", "/name/nm0000212/?ref_=tt_cl_t_2", "/name/nm0000158/?ref_=nv_sr_srsg_1_tt_2_nm_5_q_tom%2520han"); 
+
+            // ws.getMostPopularColleagues("/name/nm0000212/?ref_=tt_cl_t_2", "Meg Ryan");
+
+            // ws.getMostPopularColleagues2("/name/nm0000158/?ref_=nv_sr_srsg_1_tt_2_nm_5_q_tom%2520han", "Tom Hanks");
+
 
 
             // ws.moviesActorsInTogether("Margot Robbie", "Christian Bale", "/name/nm3053338/?ref_=tt_cl_t_2", "/name/nm0000288/?ref_=tt_cl_t_1"); 
@@ -78,7 +139,7 @@ public class Main {
 
 
             // DOesn't work
-            // ws.actorsBothActorsWorkedWith("Leonardo Dicaprio", "Cillian Murphy", "/name/nm0000138/?ref_=nv_sr_srsg_1_tt_1_nm_6_q_leona", "/name/nm0614165/?ref_=nv_sr_srsg_0_tt_2_nm_6_q_cilli"); 
+            // ws.actorsBothActorsWorkedWith("Leonardo Dicaprio", "Cillian Murphy", "/name/nm0000138", "/name/nm0614165"); 
 
 
             // TODO
