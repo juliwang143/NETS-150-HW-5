@@ -116,6 +116,7 @@ public class WebscraperDora {
     public String getDirectorRecommendations(String movieID, String movieTitle) {
         HashMap<String, Integer> directorCounts = new HashMap<>();
         HashMap<String, Double> directorSums = new HashMap<>();
+        HashMap<String, String> bestMovies = new HashMap<>();
         String creditsURL = baseURL + "title/" + movieID + "/fullcredits";
         String result = "";
         try {
@@ -128,37 +129,54 @@ public class WebscraperDora {
                 for (Element director: directors) {
                     String urlExt = director.attr("href");
                     String directorName = director.text();
+                    directorSums.put(directorName, 0.0);
+                    directorCounts.put(directorName, 0);
+                    String bestMovie = "";
+                    double highestRating = 0.0;
                     try {
                         // accesses the page of each director
                         Document directorDoc = Jsoup.connect(baseURL + urlExt).get();
                         Elements directedList = directorDoc.select("div");
-                        Document directedMovieDoc;
+                        Document dirMovieDoc;
                         for (int i = 1; i < directedList.size(); i++) {
                             if (directedList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title " +
                                     "ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-director")) {
                                 Elements previousMoviesList = directedList.get(i).select
                                         ("div.ipc-accordion__item__content_inner.accordion-content");
                                 Elements previousMovies = previousMoviesList.get(previousMoviesList.size() - 1)
-                                        .select("a");
-                                String title;
+                                        .select("div.ipc-metadata-list-summary-item__tc");
                                 for (Element movie : previousMovies) {
-                                    urlExt = movie.attr("href");
-                                    try {
-                                        directorSums.put(directorName, 0.0);
-                                        directorCounts.put(directorName, 0);
-                                        directedMovieDoc = Jsoup.connect(baseURL + urlExt +
-                                                "/ratings?ref_=tt_ql_4").get();
-                                        System.out.println(directedMovieDoc.text());
-                                        double trueRating = Double.parseDouble(directedMovieDoc
-                                                .selectFirst(".ipl-rating-star__rating").text());
-                                        // adds the movies to a HashMap while counting the times a movie appears
-                                        directorCounts.put(directorName, directorCounts.get(directorName) + 1);
-                                        directorSums.put(directorName, directorSums.get(directorName) + trueRating);
-                                    } catch (IOException e) {
-                                        System.out.println("exception: URL - " + baseURL + urlExt);
+                                    String movieName = movie.select("a").text();
+                                    String dType = movie.text().split(movieName)[1];
+                                    boolean isMovie = true;
+                                    if (dType.contains("Short") || dType.contains("Video") || dType.contains("TV")) {
+                                        isMovie = false;
+                                    }
+                                    if (isMovie) {
+                                        urlExt = movie.select("a").attr("href");
+                                        urlExt = "/title/" + urlExt.split("/")[2] + "/ratings";
+                                        try {
+                                            dirMovieDoc = Jsoup.connect(baseURL + urlExt).get();
+                                            // ensures that the User Ratings page is accessed rather than Ratings
+                                            while (!dirMovieDoc.text().split("IMDb")[0].contains("User ratings")) {
+                                                dirMovieDoc = Jsoup.connect(baseURL + urlExt).get();
+                                            }
+                                            double trueRating = Double.parseDouble(dirMovieDoc
+                                                    .selectFirst(".ipl-rating-star__rating").text());
+                                            // adds the movie rating to HashMaps of counts and sums
+                                            directorCounts.put(directorName, directorCounts.get(directorName) + 1);
+                                            directorSums.put(directorName, directorSums.get(directorName) + trueRating);
+                                            if (trueRating > highestRating) {
+                                                highestRating = trueRating;
+                                                bestMovie = movieName;
+                                            }
+                                        } catch (IOException e) {
+                                            System.out.println("exception: URL - " + baseURL + urlExt);
+                                        }
                                     }
                                 }
                             }
+                            bestMovies.put(directorName, bestMovie + "(" + highestRating + ")");
                         }
                     } catch (IOException e) {
                         System.out.println("exception: URL - " + baseURL + urlExt);
@@ -168,34 +186,21 @@ public class WebscraperDora {
         } catch(IOException e){
             System.out.println("exception: URL - " + creditsURL);
         }
-        System.out.println(directorCounts);
         for (String key : directorCounts.keySet()) {
-            result += key + " (" + (directorSums.get(key) / directorCounts.get(key)) + "), ";
+            result += key + " (" + (directorSums.get(key) / directorCounts.get(key)) + ") [" + bestMovies.get(key) + "], ";
         }
         return result.substring(0, result.length() -2);
     }
 
+    // gets the rating of a movie for a given age and gender and comparison to the average movie rating
     public String getDemographicRating(String movieID, String gender, int age) {
         String ratingsURL = baseURL + "title/" + movieID + "/ratings";
         try {
             // accesses the IMDb page of the ratings for a given movie
             Document ratingsPage = Jsoup.connect(ratingsURL).get();
-            return ratingsPage.text();
-        } catch (IOException e) {
-            System.out.println("exception: URL - " + ratingsURL);
-        }
-        return "";
-    }
-
-
-    // gets the rating of a movie for a given age and gender and comparison to the average movie rating
-    /*public String getDemographicRating(String movieID, String gender, int age) {
-        String ratingsURL = baseURL + "title/" + movieID + "/ratings";
-        try {
-            // accesses the IMDb page of the ratings for a given movie
-            Document ratingsPage = Jsoup.connect(ratingsURL).get();
-
-            System.out.println(ratingsPage.text());
+            while (!ratingsPage.text().split("IMDb")[0].contains("User ratings")) {
+                ratingsPage = Jsoup.connect(ratingsURL).get();
+            }
             double trueRating = Double.parseDouble(ratingsPage.selectFirst(".ipl-rating-star__rating").text());
             Elements ratingRows = ratingsPage.select("table").get(1).select("tr");
             // sets the row variable to match the given gender
@@ -232,6 +237,6 @@ public class WebscraperDora {
             System.out.println("exception: URL - " + ratingsURL);
         }
         return "";
-    }*/
+    }
 
 }
