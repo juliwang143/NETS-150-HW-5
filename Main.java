@@ -14,6 +14,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         Webscraper w = new Webscraper();
         boolean ongoing = true;
+        // answers a question given a number until no more questions are asked
         while (ongoing) {
             Scanner sc = new Scanner(System.in);
             System.out.println("Enter the number to be answered: " +
@@ -21,7 +22,7 @@ public class Main {
                     "\n2. Given a movie, recommend top movies that have similar genres." +
                     "\n3. Given a movie, find the movie's cast." +
                     "\n4. Given an actor and a movie they've acted in, find the colleagues who the actor has acted the most with." +
-                    "\n5. Given the director of a particular movie, find the average rating of all the movies they've directed and output the top 3 movies they've directed." +
+                    "\n5. Given the director of a particular movie, find the average rating of all the movies they have directed and output the top movie they have directed." +
                     "\n6. Given two actors, find movies they've worked in before. If they haven't worked in movies before, return the top 3 individual movies for each actor. " +
                     "\n7. Given a user's age, gender, and a movie, find the average rating from other users in that same demographic for the given movie.");
             String number = sc.nextLine();
@@ -39,8 +40,29 @@ public class Main {
                 String year = sc.nextLine();
                 String movieID = omdbRequest(title, year);
                 System.out.println(w.getGenreRecommendations(movieID, title));
-            } else if (number.equals("3")) {//TODO
-            } else if (number.equals("4")) {//TODO
+            } else if (number.equals("3")) {
+                System.out.print("Enter a movie title: ");
+                String title = sc.nextLine();
+                System.out.print("Enter the release year of " + title + ": ");
+                String year = sc.nextLine();
+                String movieID = omdbRequest(title, year);
+                w.getMovieCast(movieID);
+            } else if (number.equals("4")) {
+                System.out.print("Enter the name of one actor/actress: ");
+                String actorOne = sc.nextLine();
+                System.out.print("Enter the title of a movie " + actorOne + " has been in: ");
+                String title = sc.nextLine();
+                System.out.print("Enter the release year of " + title + ": ");
+                String year = sc.nextLine();
+                String movieIDOne = omdbRequest(title, year);
+                System.out.print("Enter the name of another actor/actress: ");
+                String actorTwo = sc.nextLine();
+                System.out.print("Enter the title of a movie " + actorTwo + " has been in: ");
+                title = sc.nextLine();
+                System.out.print("Enter the release year of " + title + ": ");
+                year = sc.nextLine();
+                String movieIDTwo = omdbRequest(title, year);
+                w.actorsBothActorsWorkedWith(actorOne, actorTwo, movieIDOne, movieIDTwo);
             } else if (number.equals("5")) {
                 System.out.print("Enter a movie title: ");
                 String title = sc.nextLine();
@@ -48,7 +70,22 @@ public class Main {
                 String year = sc.nextLine();
                 String movieID = omdbRequest(title, year);
                 System.out.println(w.getDirectorRecommendations(movieID, title));
-            } else if (number.equals("6")) {//TODO
+            } else if (number.equals("6")) {
+                System.out.print("Enter the name of one actor/actress: ");
+                String actorOne = sc.nextLine();
+                System.out.print("Enter the title of a movie " + actorOne + " has been in: ");
+                String title = sc.nextLine();
+                System.out.print("Enter the release year of " + title + ": ");
+                String year = sc.nextLine();
+                String movieIDOne = omdbRequest(title, year);
+                System.out.print("Enter the name of another actor/actress: ");
+                String actorTwo = sc.nextLine();
+                System.out.print("Enter the title of a movie " + actorTwo + " has been in: ");
+                title = sc.nextLine();
+                System.out.print("Enter the release year of " + title + ": ");
+                year = sc.nextLine();
+                String movieIDTwo = omdbRequest(title, year);
+                w.moviesActorsInTogether(actorOne, actorTwo, movieIDOne, movieIDTwo);
             } else if (number.equals("7")) {
                 System.out.print("Enter a movie title: ");
                 String title = sc.nextLine();
