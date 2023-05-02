@@ -57,11 +57,12 @@ public class WebscraperDora {
         } catch(IOException e) {
             System.out.println("exception: URL - " + keywordURL);
         }
-        // turns the HashMap into a TreeSet in order to get the top 20 movies
+        // turns the HashMap into a TreeSet in order to get ordered counts
         TreeSet<String> countsToMovies = new TreeSet<>();
         for (String key : movieCounts.keySet()) {
             countsToMovies.add(movieCounts.get(key) + ": " + key);
         }
+        // gets top 20 movie recommendations
         int count = 0;
         for (String countKey: countsToMovies.descendingSet()) {
             if (count < 20) {
@@ -111,10 +112,12 @@ public class WebscraperDora {
         } catch(IOException e) {
             System.out.println("exception: URL - " + movieURL);
         }
+        // turns the HashMap into a TreeSet in order to get ordered counts
         TreeSet<String> countsToMovies = new TreeSet<>();
         for (String key : movieCounts.keySet()) {
             countsToMovies.add(movieCounts.get(key) + ": " + key);
         }
+        // gets top 20 movie recommendations
         int count = 0;
         for (String countKey: countsToMovies.descendingSet()) {
             if (count < 20) {
