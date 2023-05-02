@@ -3,38 +3,82 @@
 // import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Scanner;
-import java.util.TreeMap;
-// import org.json.*;
-
-// import org.json.JSONException;
-// import org.json.JSONObject;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
-
-        // TODO year
-
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Movie title: ");
-        String movieTitle = sc.nextLine();
-        String[] titleWords = movieTitle.split(" ");
-        String requestTitle = "&t=";
-        for (String word: titleWords) {
-            requestTitle += word + "+";
+        Webscraper w = new Webscraper();
+        boolean ongoing = true;
+        while (ongoing) {
+            Scanner sc = new Scanner(System.in);
+            System.out.println("Enter the number to be answered: " +
+                    "\n1. Given a movie, recommend top movies that have similar keywords." +
+                    "\n2. Given a movie, recommend top movies that have similar genres." +
+                    "\n3. Given a movie, find the movie's cast." +
+                    "\n4. Given an actor and a movie they've acted in, find the colleagues who the actor has acted the most with." +
+                    "\n5. Given the director of a particular movie, find the average rating of all the movies they've directed and output the top 3 movies they've directed." +
+                    "\n6. Given two actors, find movies they've worked in before. If they haven't worked in movies before, return the top 3 individual movies for each actor. " +
+                    "\n7. Given a user's age, gender, and a movie, find the average rating from other users in that same demographic for the given movie.");
+            String number = sc.nextLine();
+            if (number.equals("1")) {
+                System.out.print("Enter a movie title: ");
+                String title = sc.nextLine();
+                System.out.print("Enter the release year of " + title + ": ");
+                String year = sc.nextLine();
+                String movieID = omdbRequest(title, year);
+                System.out.println(w.getKeywordRecommendations(movieID, title));
+            } else if (number.equals("2")) {
+                System.out.print("Enter a movie title: ");
+                String title = sc.nextLine();
+                System.out.print("Enter the release year of " + title + ": ");
+                String year = sc.nextLine();
+                String movieID = omdbRequest(title, year);
+                System.out.println(w.getGenreRecommendations(movieID, title));
+            } else if (number.equals("3")) {//TODO
+            } else if (number.equals("4")) {//TODO
+            } else if (number.equals("5")) {
+                System.out.print("Enter a movie title: ");
+                String title = sc.nextLine();
+                System.out.print("Enter the release year of " + title + ": ");
+                String year = sc.nextLine();
+                String movieID = omdbRequest(title, year);
+                System.out.println(w.getDirectorRecommendations(movieID, title));
+            } else if (number.equals("6")) {//TODO
+            } else if (number.equals("7")) {
+                System.out.print("Enter a movie title: ");
+                String title = sc.nextLine();
+                System.out.print("Enter the release year of " + title + ": ");
+                String year = sc.nextLine();
+                System.out.print("Enter your gender (Male/Female): ");
+                String gender = sc.nextLine();
+                System.out.print("Enter your age: ");
+                int age = Integer.parseInt(sc.nextLine());
+                String movieID = omdbRequest(title, year);
+                System.out.println(w.getDemographicRating(movieID, gender, age));
+            } else {
+                System.out.println(number + " is not a valid option.");
+            }
+            System.out.print("Do you want to ask another question (Yes/No)? ");
+            String answer = sc.nextLine();
+            if (!answer.equals("Yes")) {
+                ongoing = false;
+            }
         }
-        requestTitle = requestTitle.substring(0, requestTitle.length() -1);
-        System.out.println(requestTitle);
-        String url = "http://www.omdbapi.com/?apikey=56dae4f7&" + requestTitle;
+    }
 
+    public static String omdbRequest(String movieTitle, String movieYear) {
+        String[] titleWords = movieTitle.split(" ");
+        String omdbRequest = "&t=";
+        for (String word : titleWords) {
+            omdbRequest += word + "+";
+        }
+        omdbRequest = omdbRequest.substring(0, omdbRequest.length() - 1) + "&y" + movieYear;
+        String url = "http://www.omdbapi.com/?apikey=56dae4f7&" + omdbRequest;
         var uri = URI.create(url);
         var client = HttpClient.newHttpClient();
         var request = HttpRequest
@@ -43,113 +87,16 @@ public class Main {
                 .header("accept", "application/json")
                 .GET()
                 .build();
+        String movieID = "";
         try {
             var response = client.send(request, HttpResponse.BodyHandlers.ofString());
             String output = response.body();
-            // System.out.println(response.statusCode());
-            // System.out.println(output);
 
-            String movieID = output.split("imdbID\":\"")[1].split("\"")[0];
-            System.out.println(movieID);
-
-            Webscraper ws = new Webscraper();
-
-            // Testing getMovieCast()
-            // ws.getMovieCast("tt11286314");
-
-            // ws.getMovieCast(movieID);
-
-
-            // Testing isActorInMovie
-            // boolean isActorInMovie = ws.isActorInMovie("https://www.imdb.com/title/tt11286314", "Jennifer Lawrence");
-            // System.out.println(isActorInMovie);
-
-            // Testing getMostPopularColleagues
-            // ws.getMostPopularColleagues("/name/nm0000288/?ref_=tt_cl_t_1", "Christian Bale");
-
-            // ws.getMostPopularColleagues2("/name/nm2225369/?ref_=tt_cl_t_2", "Jennifer Lawrence");
-
-            // ws.getMostPopularColleagues2("/name/nm2225369/?ref_=tt_cl_t_2", "Jennifer Lawrence");
-
-            // TODO tested
-            // ws.getMostPopularColleagues2("/name/nm2225369/?ref_=tt_cl_t_2", "Jennifer Lawrence");
-
-            // ws.getMostPopularColleagues("/name/nm0000158/?ref_=nv_sr_srsg_1_tt_2_nm_5_q_tom%2520han", "Tom Hanks");
-
-
-
-            // TODO testing getActorUrl
-            // System.out.println(ws.getActorUrl("Meg Ryan", "tt0098635"));
-            // System.out.println(ws.getActorUrl("Josh Hutcherson", "tt1392170"));
-            // System.out.println(ws.getActorUrl("Kate Winslet", "tt0120338"));
-
-
-            // TODO testing actorsBothActorsWorkedWith2
-            // ws.actorsBothActorsWorkedWith2("Meg Ryan", "Kate Winslet", "tt0098635", "tt0120338");
-
-
-
-
-            // ws.getMostPopularColleagues("/name/nm0000288/?ref_=tt_cl_t_1", "Christian Bale");
-
-            // ws.getMostPopularColleagues("/name/nm3053338/?ref_=tt_cl_t_2", "Margot Robbie");
-
-
-            // TODO doesn't work
-            // ws.getMostPopularColleagues("/name/nm0000158/?ref_=nv_sr_srsg_1_tt_2_nm_5_q_tom%2520han", "Tom Hanks");
-
-            // TODO doesn't work
-            // ws.getMostPopularColleagues("/name/nm0000212/?ref_=nv_sr_srsg_0_tt_0_nm_8_q_meg%2520r", "Meg Ryan");
-
-
-            //
-            // System.out.println(ws.getActorUrl("Meg Ryan", "tt0098635"));
-
-
-            ws.moviesActorsInTogether2("Josh Hutcherson", "Jennifer Lawrence", "tt1392170", "tt1392170"); 
-
-            // ws.moviesActorsInTogether2("Meg Ryan", "Tom Hanks", "/name/nm0000212/?ref_=tt_cl_t_2", "/name/nm0000158/?ref_=nv_sr_srsg_1_tt_2_nm_5_q_tom%2520han"); 
-
-
-            // TODO not finished
-            // ws.moviesActorsInTogether("Meg Ryan", "Billy Crystal", "/name/nm0000212/?ref_=tt_cl_t_2", "name/nm0000345/?ref_=tt_cl_t_1"); 
-
-
-
-            // Testing revised method
-            // TODO
-            // ws.getMovieCast2(movieID);
-
-            // ws.moviesActorsInTogether2("Meg Ryan", "Tom Hanks", "/name/nm0000212/?ref_=tt_cl_t_2", "/name/nm0000158/?ref_=nv_sr_srsg_1_tt_2_nm_5_q_tom%2520han"); 
-
-            // ws.getMostPopularColleagues("/name/nm0000212/?ref_=tt_cl_t_2", "Meg Ryan");
-
-            // ws.getMostPopularColleagues2("/name/nm0000158/?ref_=nv_sr_srsg_1_tt_2_nm_5_q_tom%2520han", "Tom Hanks");
-
-
-
-            // ws.moviesActorsInTogether("Margot Robbie", "Christian Bale", "/name/nm3053338/?ref_=tt_cl_t_2", "/name/nm0000288/?ref_=tt_cl_t_1"); 
-
-
-            // ws.moviesActorsInTogether("Scarlett Johansson", "Chris Evans", "/name/nm0424060/?ref_=nv_sr_srsg_1_tt_2_nm_5_q_scarlett", "/name/nm0262635/?ref_=nv_sr_srsg_0_tt_1_nm_7_q_chris%2520evans"); 
-
-            // ws.getMovieCast("tt4154664");
-
-            // ws.actorsBothActorsWorkedWith("Scarlett Johansson", "Chris Evans", "/name/nm0424060/?ref_=nv_sr_srsg_1_tt_2_nm_5_q_scarlett", "/name/nm0262635/?ref_=nv_sr_srsg_0_tt_1_nm_7_q_chris%2520evans"); 
-
-
-            // DOesn't work
-            // ws.actorsBothActorsWorkedWith("Leonardo Dicaprio", "Cillian Murphy", "/name/nm0000138", "/name/nm0614165"); 
-
-
-            // TODO
-            // ws.getMovieCastByUrl("https://www.imdb.com/title/tt10304142/?ref_=nm_flmg_t_2_act", new TreeMap<String, Integer>());
-           
-            // TODO below is working
-            // ws.getMovieCastByUrl("https://www.imdb.com/title/tt1800241/", new TreeMap<String, Integer>());
+            movieID = output.split("imdbID\":\"")[1].split("\"")[0];
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return movieID;
     }
 
 }

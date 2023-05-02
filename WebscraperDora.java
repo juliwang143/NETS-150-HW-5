@@ -37,7 +37,7 @@ public class WebscraperDora {
                             urlExt += "&ref_=kw_ref_typ&sort=moviemeter,asc&mode=detail&page=1&title_type=movie";
                             // accesses the page of top recommendations for a specific keyword
                             keywordsDoc = Jsoup.connect(baseURL + urlExt).get();
-                            Elements keywordDocDivs = keywordsDoc.select("div.lister-item mode-detail");
+                            Elements keywordDocDivs = keywordsDoc.select("div.lister-item.mode-detail");
                             for (Element keywordDocDiv : keywordDocDivs) {
                                 String title = keywordDocDiv.selectFirst("h3").select("a").text();
                                 // adds the movies to a HashMap while counting the times a movie appears
@@ -57,9 +57,16 @@ public class WebscraperDora {
         } catch(IOException e) {
             System.out.println("exception: URL - " + keywordURL);
         }
+        // turns the HashMap into a TreeSet in order to get the top 20 movies
+        TreeSet<String> countsToMovies = new TreeSet<>();
         for (String key : movieCounts.keySet()) {
-            if (movieCounts.get(key) > 2 && !key.equals(movieTitle)) {
-                result += key + " (" + movieCounts.get(key) + "), ";
+            countsToMovies.add(movieCounts.get(key) + ": " + key);
+        }
+        int count = 0;
+        for (String countKey: countsToMovies.descendingSet()) {
+            if (count < 20) {
+                result += "["+ countKey + "], ";
+                count++;
             }
         }
         return result.substring(0, result.length() -2);
@@ -104,9 +111,15 @@ public class WebscraperDora {
         } catch(IOException e) {
             System.out.println("exception: URL - " + movieURL);
         }
+        TreeSet<String> countsToMovies = new TreeSet<>();
         for (String key : movieCounts.keySet()) {
-            if (movieCounts.get(key) > 1 && !key.equals(movieTitle)) {
-                result += key + " (" + movieCounts.get(key) + "), ";
+            countsToMovies.add(movieCounts.get(key) + ": " + key);
+        }
+        int count = 0;
+        for (String countKey: countsToMovies.descendingSet()) {
+            if (count < 20) {
+                result += "["+ countKey + "], ";
+                count++;
             }
         }
         return result.substring(0, result.length() -2);
