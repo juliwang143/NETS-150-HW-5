@@ -1,0 +1,57 @@
+Hi! 
+
+Our application is an interactive application that takes in information regarding a movie or 
+actor, and answers fixed questions about these inputs. Specifically, we wanted to look at 
+the social network that movies and actors film, and also provide some movie recommendations
+based on the inputted movie's features, such as keywords and genre. 
+
+Users can choose from the following questions:
+    - Given a movie, recommend top movies that have similar keywords.
+    - Given a movie, recommend top movies that have similar genres.
+    - Given a movie, find the movie's cast.
+    - Given an actor and a movie they've acted in, as well as another actor and a movie they've acted in, find the actors who both actors have worked with.
+    - Given the director of a particular movie, find the average rating of all the movies they have directed and output the top movie they have directed.
+    - Given two actors, find movies they've worked in before. If they haven't worked in movies before, output that they have not worked in the same movies together before.
+    - Given a user's age, gender, and a movie, find the average rating from other users in that same demographic for the given movie.
+    - Given an actor and a movie they've acted in before, find the actors who he/she have worked with more than once.
+
+The concepts that we focused on were document search and social networks. 
+
+For document search, our application webscrapes IMDB pages for a particular movie and then finds 
+similar movies by examining the page for that movie's attributes.
+
+For social networks, we looked at different types of closure. 
+    - For the question:
+        Given an actor and a movie they've acted in, as well as another actor and a movie they've acted in, find the actors who both actors have worked with.
+
+        We consider the two given actors, actor #1 and actor #2. Actors who both actor #1 and actor #2 have worked with, let 
+        them be called Actor #3, will more likely have worked together before. This can be because of many different
+        factors, such as actor #1 and actor #2 working in the same movies with actor #3, or the fact that actors #1 and 
+        actors #2 have limited 
+
+
+
+
+This is different than other homeworks we've implemented before, as it builds our own recommendations,
+not relying on IMDb's movie recommendations. Furthermore, we incorporate concepts related to social 
+networks, thus implicitly building social networks between different movies, actors, and movie attributes. 
+Although we could have explicitly built graphs, it wouldn't make sense to as each graph would have to be 
+constructed for each inputted movie, which is extraneous work. Furthermore, the recommendations we give
+are based on triadic closure, and thus there are no algorithms like BFS, DFS, or Dijkstra's that are 
+actually quite involved that would be helpul for us. Instead, we can simply examine nodes that share an
+affiliation, which just involves iterating over each node's list (whatever it may be, from movies to actors)
+and finding those in common to both lists. 
+
+Our application further differs from the homework as it required more real-life flexibility. For instance, 
+the movieId needed for accessing a movie's URL is not the title, as with HW 3, where a given nominee's 
+name could easily be appended to a base URL. Instead, we had to work with the OMDb API in order to retrieve
+a given movie's ID from its name and year. This is why the parameters to our questions include the movie id. 
+Furthermore, we had issues trying to figure out how to identify an actor's ID from its name. This wasn't possible,
+given external APIs and the way that IMDb structures its URLs. Thus, we find an actor's ID using a method that 
+takes in an actor and a movie they've worked in before. We find the actor's ID by iterating over the cast section
+of the page for the given movie, and identifying the <a> element (if one exists) for the given actor. 
+Ultimately, this project required a lot more examination of the webpages and being flexible to accomodate the
+different page formats. 
+
+
+

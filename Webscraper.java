@@ -12,10 +12,14 @@ public class Webscraper {
 
     private HashMap<String, String> castMap;
     private String baseUrl;
+
+    /*** 
+    Map that gets updated with each method call that involves it, mapping an actor's colleague to the number of times
+    the given actor has worked with the colleague
+    ***/
     private TreeMap<String, Integer> colleaguesFreqMap;
     String movieUrl;
 
-    // TODO my base url is different than Dora's
     public Webscraper() {
         this.castMap = new HashMap<String, String>();
         this.movieUrl = "https://www.imdb.com/title/";
@@ -24,10 +28,12 @@ public class Webscraper {
         this.colleaguesFreqMap = new TreeMap<String, Integer>();
     }
 
+    // Output the top cast of a movie given a movie ID
     public void getMovieCast(String movieId) {
         String url = this.movieUrl + movieId;
         Document movieDoc = null;
 
+        // Attempt to load the page for the given movie
         try {
             movieDoc = Jsoup.connect(url).get();
         } catch (IOException e) {
@@ -35,6 +41,7 @@ public class Webscraper {
             return;
         }
 
+        // Examine the page for the cast section
         Elements sectionElements = movieDoc.select("section");
         Element topCastSection = null;
 
@@ -59,6 +66,7 @@ public class Webscraper {
         Element topCastGridDiv = divElements.get(1);
         Elements aElements = topCastGridDiv.select("a");
 
+        // Iterate through all the actors in the cast section and add them to the map
         for (Element aElement : aElements) {
             if (aElement.attr("data-testid").equals("title-cast-item__actor")) {
                 String actorName = aElement.text();
@@ -67,18 +75,25 @@ public class Webscraper {
             }
         }
 
+        // Output all the actors in the cast section map
         for (String actorName : castMap.keySet()) {
             System.out.println(actorName);
         }
     }
 
     // Helper method for getMostPopularColleagues
+    /***
+    Retrieve the cast of a movie given that movie page's URL. 
+    Populates the colleaguesFreqMap so that the number of times each actor is encountered in the cast section of a movie 
+    is the value of that colleague actor's map entry. 
+    ***/
     public void getMovieCastByUrl(String url, TreeMap<String, Integer> colleaguesFreqMap) {
         String movieUrl = url;
         this.castMap = new HashMap<String, String>();
 
         Document movieDoc = null;
 
+        // Attempt to load the page for the given movie
         try {
             movieDoc = Jsoup.connect(movieUrl).get();
         } catch (IOException e) {
@@ -86,6 +101,7 @@ public class Webscraper {
             return;
         }
 
+        // Examine the page for the cast section
         Elements sectionElements = movieDoc.select("section");
         Element topCastSection = null;
 
@@ -110,6 +126,7 @@ public class Webscraper {
         Element topCastGridDiv = divElements.get(1);
         Elements aElements = topCastGridDiv.select("a");
 
+        // Iterate through all the actors in the cast section and add them to the map
         for (Element aElement : aElements) {
             if (aElement.attr("data-testid").equals("title-cast-item__actor")) {
                 String actorName = aElement.text();
@@ -118,6 +135,9 @@ public class Webscraper {
             }
         }
 
+        // Update frequency of actor seen in the map 
+        // If seen before, increases by 1
+        // If actor has not been seen before, its value gets set to 1
         for (String actorName : castMap.keySet()) {
             colleaguesFreqMap.put(actorName, colleaguesFreqMap.getOrDefault(actorName, 0) + 1);
         }
@@ -129,6 +149,7 @@ public class Webscraper {
 
         Document movieDoc = null;
 
+        // Attempt to load the page for the given movie
         try {
             movieDoc = Jsoup.connect(movieUrl).get();
         } catch (IOException e) {
@@ -136,6 +157,7 @@ public class Webscraper {
             return false;
         }
 
+        // Examine the page for the cast section
         Elements sectionElements = movieDoc.select("section");
         Element topCastSection = null;
 
@@ -160,6 +182,7 @@ public class Webscraper {
         Element topCastGridDiv = divElements.get(1);
         Elements aElements = topCastGridDiv.select("a");
 
+        // Iterate through all the actors in the cast section and check if the given actor matches current actor being examined
         for (Element aElement : aElements) {
             if (aElement.attr("data-testid").equals("title-cast-item__actor")) {
                 if (aElement.text().contains(actorName)) {
@@ -176,6 +199,7 @@ public class Webscraper {
         String url = this.movieUrl + movieId;
         Document movieDoc = null;
 
+        // Attempt to load the page for the given movie
         try {
             movieDoc = Jsoup.connect(url).get();
         } catch (IOException e) {
@@ -183,6 +207,7 @@ public class Webscraper {
             return "";
         }
 
+        // Examine the page for the cast section
         Elements sectionElements = movieDoc.select("section");
         Element topCastSection = null;
 
@@ -207,6 +232,7 @@ public class Webscraper {
         Element topCastGridDiv = divElements.get(1);
         Elements aElements = topCastGridDiv.select("a");
 
+        // Iterate through all the actors in the cast section and check if the given actor matches current actor being examined
         for (Element aElement : aElements) {
             if (aElement.attr("data-testid").equals("title-cast-item__actor")) {
                 String actorName = aElement.text();
@@ -232,15 +258,23 @@ public class Webscraper {
         actor1Url = getActorUrl(actor1Name, movie1Id);
         actor2Url = getActorUrl(actor2Name, movie2Id);
 
-        System.out.println("dof");
-        System.out.println(actor1Url);
-        System.out.println(actor2Url);
+        // Check if URL for given actors can be found/accessed
+        if (actor1Url == "" || actor2Url == "") {
+            System.out.println("URLs for at least one of the given actors were not valid.");
+            return;
+        }
 
+        // Find actors that have worked with actor #1
+
+        // Maps movie name to movie page's URL
         HashMap<String, String> moviesOfActor1Map = new HashMap<String, String>();
+
+        // Maps colleague actor's name to actor page's URL
         TreeMap<String, Integer> colleaguesOfActor1Map = new TreeMap<String, Integer>();
 
         String url = this.baseUrl + actor1Url;
 
+        // Attempt to load the page for the first actor
         Document actorDoc = null;
         try {
             actorDoc = Jsoup.connect(url).get();
@@ -249,40 +283,48 @@ public class Webscraper {
             return;
         }
 
-        Elements directedList = actorDoc.select("div");
-        Document directedMovieDoc;
-        for (int i = 1; i < directedList.size(); i++) {
-            if (directedList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actor") ||
-                    directedList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actress")) {
-                Elements previousMoviesList = directedList.get(i).select
+        // Finds the section for actor 1's acting credits
+        Elements movieList = actorDoc.select("div");
+        for (int i = 1; i < movieList.size(); i++) {
+            if (movieList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actor") ||
+                    movieList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actress")) {
+                Elements previousMoviesList = movieList.get(i).select
                         ("div.ipc-accordion__item__content_inner.accordion-content");
                 Elements previousMovies = previousMoviesList.get(previousMoviesList.size() - 1)
                         .select("div.ipc-metadata-list-summary-item__tc");
                 for (Element movie : previousMovies) {
                     String movieTitle = movie.select("a").text();
 
+                    // Checks if credits is not a feature film
                     String mType = movie.text().split(movieTitle)[1];
                     if (mType.contains("Short") || mType.contains("Video") || mType.contains("TV")) {
                         continue;
                     }
 
+                    // Adds movie and its url to map for actor 1
                     String href = movie.select("a").attr("href");
                     moviesOfActor1Map.put(movieTitle, href);
                 }
             }
         }
 
+        // Populates the colleaguesOfActor1Map with correct frequency for how many times actor1 acted with colleague
         for (String movieTitle : moviesOfActor1Map.keySet()) {
             String href = this.baseUrl + moviesOfActor1Map.get(movieTitle);
             getMovieCastByUrl(href, colleaguesOfActor1Map);
         }
 
         // Find actors that have worked with actor #2
+
+        // Maps movie name to movie page's URL
         HashMap<String, String> moviesOfActor2Map = new HashMap<String, String>();
+
+        // Maps colleague actor's name to actor page's URL
         TreeMap<String, Integer> colleaguesOfActor2Map = new TreeMap<String, Integer>();
 
         url = this.baseUrl + actor2Url;
 
+        // Attempt to load the page for the second actor
         actorDoc = null;
         try {
             actorDoc = Jsoup.connect(url).get();
@@ -291,52 +333,60 @@ public class Webscraper {
             return;
         }
 
-        directedList = actorDoc.select("div");
-        for (int i = 1; i < directedList.size(); i++) {
-            if (directedList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actor") ||
-                    directedList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actress")) {
-                Elements previousMoviesList = directedList.get(i).select
+        // Finds the section for actor 2's acting credits
+        movieList = actorDoc.select("div");
+        for (int i = 1; i < movieList.size(); i++) {
+            if (movieList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actor") ||
+                movieList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actress")) {
+                Elements previousMoviesList = movieList.get(i).select
                         ("div.ipc-accordion__item__content_inner.accordion-content");
                 Elements previousMovies = previousMoviesList.get(previousMoviesList.size() - 1)
                         .select("div.ipc-metadata-list-summary-item__tc");
                 for (Element movie : previousMovies) {
                     String movieTitle = movie.select("a").text();
 
+                    // Checks if credits is not a feature film
                     String mType = movie.text().split(movieTitle)[1];
                     if (mType.contains("Short") || mType.contains("Video") || mType.contains("TV")) {
                         continue;
                     }
 
+                    // Adds movie and its url to map for actor 2
                     String href = movie.select("a").attr("href");
                     moviesOfActor2Map.put(movieTitle, href);
                 }
             }
         }
 
+        // Populates the colleaguesOfActor2Map with correct frequency for how many times actor2 acted with colleague
         for (String movieTitle : moviesOfActor2Map.keySet()) {
             String href = this.baseUrl + moviesOfActor2Map.get(movieTitle);
             getMovieCastByUrl(href, colleaguesOfActor2Map);
         }
 
-        // TODO both logic
+        // Initializes a set to store actors that have worked with both given actors
         TreeSet<String> colleaguesOfBoth = new TreeSet<String>();
 
+        // Iterates through the colleagues of actor #1 and checks if actor #2 has worked with them
         for (String colleague : colleaguesOfActor1Map.keySet()) {
             if (colleaguesOfActor2Map.keySet().contains(colleague)) {
                 colleaguesOfBoth.add(colleague);
             }
         }
 
+        // Iterates through the colleagues of actor #2 and checks if actor #1 has worked with them
         for (String colleague : colleaguesOfActor2Map.keySet()) {
             if (colleaguesOfActor1Map.keySet().contains(colleague)) {
                 colleaguesOfBoth.add(colleague);
             }
         }
 
-        // TODO comment
+        // Removes both given actors as colleagues of each other, as method should return actors who have worked with
+        // both given actors
         colleaguesOfBoth.remove(actor1Name);
         colleaguesOfBoth.remove(actor2Name);
 
+        // Checks if there exists at least one actor who has worked with both given actors
         if (colleaguesOfBoth.size() >= 1) {
             System.out.println(actor1Name + " and " + actor2Name + " have both acted with the following actor/actresses together:");
             for (String colleague : colleaguesOfBoth) {
@@ -347,12 +397,23 @@ public class Webscraper {
         }
     }
 
-    public void getMostPopularColleagues(String actorUrl, String actorName) {
+    // Given an actor and a movie they've acted in before, find the actors who he/she have worked with more than once.
+    public void getMostPopularColleagues(String actorName, String movieId) {
+        String actorUrl = getActorUrl(actorName, movieId);
+
+        // Check if URL for given actors can be found/accessed
+        if (actorUrl == "") {
+            System.out.println("URL for given actor could not be accessed.");
+            return;
+        }
+
+        // Maps colleague actor's name to colleague actor page's URL
         HashMap<String, String> moviesOfColleaguesMap = new HashMap<String, String>();
         colleaguesFreqMap = new TreeMap<String, Integer>();
 
         String url = this.baseUrl + actorUrl;
 
+        // Attempts to load page for given actor
         Document actorDoc = null;
         try {
             actorDoc = Jsoup.connect(url).get();
@@ -361,29 +422,38 @@ public class Webscraper {
             return;
         }
 
-
-        Elements directedList = actorDoc.select("div");
-        Document directedMovieDoc;
-        for (int i = 1; i < directedList.size(); i++) {
-            if (directedList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actor") ||
-                    directedList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actress")) {
-                Elements previousMoviesList = directedList.get(i).select
+        // Finds the section for actor's acting credits
+        Elements moviesList = actorDoc.select("div");
+        for (int i = 1; i < moviesList.size(); i++) {
+            if (moviesList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actor") ||
+                moviesList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actress")) {
+                Elements previousMoviesList = moviesList.get(i).select
                         ("div.ipc-accordion__item__content_inner.accordion-content");
                 Elements previousMovies = previousMoviesList.get(previousMoviesList.size() - 1)
                         .select("div.ipc-metadata-list-summary-item__tc");
                 for (Element movie : previousMovies) {
                     String movieTitle = movie.select("a").text();
+
+                    // Checks if credits is not a feature film
+                    String mType = movie.text().split(movieTitle)[1];
+                    if (mType.contains("Short") || mType.contains("Video") || mType.contains("TV")) {
+                        continue;
+                    }
+
+                    // Adds movie and its url to map for actor
                     String href = movie.select("a").attr("href");
                     moviesOfColleaguesMap.put(movieTitle, href);
                 }
             }
         }
 
+        // Finds actors of each movie that given actor has acted in, and populates moviesOfColleaguesMap with colleagues
         for (String movieTitle : moviesOfColleaguesMap.keySet()) {
             String href = this.baseUrl + moviesOfColleaguesMap.get(movieTitle);
             getMovieCastByUrl(href, colleaguesFreqMap);
         }
 
+        // Finds colleagues with whom given actor has acted with at least twice 
         ArrayList<String> frequentColleagues = new ArrayList<String>();
         for (String colleague : colleaguesFreqMap.keySet()) {
             if (colleaguesFreqMap.get(colleague) >= 2) {
@@ -391,6 +461,7 @@ public class Webscraper {
             }
         }
 
+        // Checks to see if there exists colleagues who have worked with given actor before at least twice 
         if (colleaguesFreqMap.size() >= 1) {
             System.out.println(actorName + " has worked with the following actors/actresses");
             for (String colleague : frequentColleagues) {
@@ -416,11 +487,21 @@ public class Webscraper {
         actor1Url = getActorUrl(actor1Name, movie1Id);
         actor2Url = getActorUrl(actor2Name, movie2Id);
 
+        // Check if URL for given actors can be found/accessed
+        if (actor1Url == "" || actor2Url == "") {
+            System.out.println("URLs for at least one of the given actors were not valid.");
+            return;
+        }
+
+        // Maps movie name to movie page's URL
         HashMap<String, String> moviesOfActor1Map = new HashMap<String, String>();
+
+        // Maps colleague actor's name to actor page's URL
         TreeMap<String, Integer> colleaguesOfActor1Map = new TreeMap<String, Integer>();
 
         String url = this.baseUrl + actor1Url;
 
+        // Attempts to load page for given actor
         Document actorDoc = null;
         try {
             actorDoc = Jsoup.connect(url).get();
@@ -429,40 +510,48 @@ public class Webscraper {
             return;
         }
 
-        Elements directedList = actorDoc.select("div");
-        Document directedMovieDoc;
-        for (int i = 1; i < directedList.size(); i++) {
-            if (directedList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actor") ||
-                    directedList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actress")) {
-                Elements previousMoviesList = directedList.get(i).select
+        // Finds the section for actor's acting credits
+        Elements moviesList = actorDoc.select("div");
+        for (int i = 1; i < moviesList.size(); i++) {
+            if (moviesList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actor") ||
+                    moviesList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actress")) {
+                Elements previousMoviesList = moviesList.get(i).select
                         ("div.ipc-accordion__item__content_inner.accordion-content");
                 Elements previousMovies = previousMoviesList.get(previousMoviesList.size() - 1)
                         .select("div.ipc-metadata-list-summary-item__tc");
                 for (Element movie : previousMovies) {
                     String movieTitle = movie.select("a").text();
 
+                    // Checks if credits is not a feature film
                     String mType = movie.text().split(movieTitle)[1];
                     if (mType.contains("Short") || mType.contains("Video") || mType.contains("TV")) {
                         continue;
                     }
 
+                    // Adds movie and its url to map for actor
                     String href = movie.select("a").attr("href");
                     moviesOfActor1Map.put(movieTitle, href);
                 }
             }
         }
 
+        // Populates the colleaguesOfActor1Map with correct frequency for how many times actor1 acted with colleague
         for (String movieTitle : moviesOfActor1Map.keySet()) {
             String href = this.baseUrl + moviesOfActor1Map.get(movieTitle);
             getMovieCastByUrl(href, colleaguesOfActor1Map);
         }
 
         // Find actors that have worked with actor #2
+
+        // Maps movie name to movie page's URL
         HashMap<String, String> moviesOfActor2Map = new HashMap<String, String>();
+
+        // Maps colleague actor's name to actor page's URL
         TreeMap<String, Integer> colleaguesOfActor2Map = new TreeMap<String, Integer>();
 
         url = this.baseUrl + actor2Url;
 
+        // Attempts to load page associated with actor
         actorDoc = null;
         try {
             actorDoc = Jsoup.connect(url).get();
@@ -471,28 +560,32 @@ public class Webscraper {
             return;
         }
 
-        directedList = actorDoc.select("div");
-        for (int i = 1; i < directedList.size(); i++) {
-            if (directedList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actor") ||
-                    directedList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actress")) {
-                Elements previousMoviesList = directedList.get(i).select
+        // Finds the section for actor's acting credits
+        moviesList = actorDoc.select("div");
+        for (int i = 1; i < moviesList.size(); i++) {
+            if (moviesList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actor") ||
+                    moviesList.get(i - 1).className().equals("ipc-title ipc-title--base ipc-title--title ipc-title--on-textPrimary sc-4390696d-4 hPNkDc filmo-section-actress")) {
+                Elements previousMoviesList = moviesList.get(i).select
                         ("div.ipc-accordion__item__content_inner.accordion-content");
                 Elements previousMovies = previousMoviesList.get(previousMoviesList.size() - 1)
                         .select("div.ipc-metadata-list-summary-item__tc");
                 for (Element movie : previousMovies) {
                     String movieTitle = movie.select("a").text();
 
+                    // Checks if credits is not a feature film
                     String mType = movie.text().split(movieTitle)[1];
                     if (mType.contains("Short") || mType.contains("Video") || mType.contains("TV")) {
                         continue;
                     }
 
+                    // Adds movie and its url to map for actor
                     String href = movie.select("a").attr("href");
                     moviesOfActor2Map.put(movieTitle, href);
                 }
             }
         }
 
+        // Populates the colleaguesOfActor2Map with correct frequency for how many times actor2 acted with colleague
         for (String movieTitle : moviesOfActor2Map.keySet()) {
             String href = this.baseUrl + moviesOfActor2Map.get(movieTitle);
             getMovieCastByUrl(href, colleaguesOfActor2Map);
@@ -500,26 +593,25 @@ public class Webscraper {
 
         TreeSet<String> moviesTogether = new TreeSet<String>();
 
-        // TODO logic for both
+        // Iterates through all the movies that actor1 has acted in and checks if actor2 also acted in that movie
         for (String movieTitle : moviesOfActor1Map.keySet()) {
             String href = this.baseUrl + moviesOfActor1Map.get(movieTitle);
 
-            // TODO new
             if (isActorInMovie(href, actor2Name)) {
                 moviesTogether.add(movieTitle);
             }
         }
 
-        // TODO
+        // Iterates through all the movies that actor2 has acted in and checks if actor1 also acted in that movie
         for (String movieTitle : moviesOfActor2Map.keySet()) {
             String href = this.baseUrl + moviesOfActor2Map.get(movieTitle);
 
-            // TODO new
             if (isActorInMovie(href, actor1Name)) {
                 moviesTogether.add(movieTitle);
             }
         }
 
+        // Checks to see if there exists movies that both actors have worked in together before
         if (moviesTogether.size() >= 1) {
             System.out.println(actor1Name + " and " + actor2Name + " have been in the following movies together:");
             for (String movie : moviesTogether) {

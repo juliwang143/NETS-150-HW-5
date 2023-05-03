@@ -17,14 +17,24 @@ public class Main {
         // answers a question given a number until no more questions are asked
         while (ongoing) {
             Scanner sc = new Scanner(System.in);
+            // System.out.println("Enter the number to be answered: " +
+            //         "\n1. Given a movie, recommend top movies that have similar keywords." +
+            //         "\n2. Given a movie, recommend top movies that have similar genres." +
+            //         "\n3. Given a movie, find the movie's cast." +
+            //         "\n4. Given an actor and a movie they've acted in, find the colleagues who the actor has acted the most with." +
+            //         "\n5. Given the director of a particular movie, find the average rating of all the movies they have directed and output the top movie they have directed." +
+            //         "\n6. Given two actors, find movies they've worked in before. If they haven't worked in movies before, output that they have not worked in the same movies together before. " +
+            //         "\n7. Given a user's age, gender, and a movie, find the average rating from other users in that same demographic for the given movie.");
+            
             System.out.println("Enter the number to be answered: " +
                     "\n1. Given a movie, recommend top movies that have similar keywords." +
                     "\n2. Given a movie, recommend top movies that have similar genres." +
                     "\n3. Given a movie, find the movie's cast." +
-                    "\n4. Given an actor and a movie they've acted in, find the colleagues who the actor has acted the most with." +
+                    "\n4. Given an actor and a movie they've acted in, as well as another actor and a movie they've acted in, find the actors who both actors have worked with." +
                     "\n5. Given the director of a particular movie, find the average rating of all the movies they have directed and output the top movie they have directed." +
-                    "\n6. Given two actors, find movies they've worked in before. If they haven't worked in movies before, return the top 3 individual movies for each actor. " +
-                    "\n7. Given a user's age, gender, and a movie, find the average rating from other users in that same demographic for the given movie.");
+                    "\n6. Given two actors, find movies they've worked in before. If they haven't worked in movies before, output that they have not worked in the same movies together before. " +
+                    "\n7. Given a user's age, gender, and a movie, find the average rating from other users in that same demographic for the given movie." + 
+                    "\n8. Given an actor and a movie they've acted in before, find the actors who he/she have worked with more than once.");
             String number = sc.nextLine();
             if (number.equals("1")) {
                 System.out.print("Enter a movie title: ");
@@ -97,6 +107,15 @@ public class Main {
                 int age = Integer.parseInt(sc.nextLine());
                 String movieID = omdbRequest(title, year);
                 System.out.println(w.getDemographicRating(movieID, gender, age));
+            } else if (number.equals("8")) {
+                System.out.print("Enter the name of one actor/actress: ");
+                String actor = sc.nextLine();
+                System.out.print("Enter the title of a movie " + actor + " has been in: ");
+                String title = sc.nextLine();
+                System.out.print("Enter the release year of " + title + ": ");
+                String year = sc.nextLine();
+                String movieID = omdbRequest(title, year);
+                w.getMostPopularColleagues(actor, movieID);
             } else {
                 System.out.println(number + " is not a valid option.");
             }

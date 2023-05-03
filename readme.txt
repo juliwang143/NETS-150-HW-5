@@ -1,10 +1,7 @@
-TODO change parameters
-
-TODO method that gets a method's id based on the title and year, move it to webscreaper
-
 We use the OMDb API in order to get the movie ID for the IMDb site for each movie. All
 methods thus assume that there is a valid input to the OMDb API (capitalized movie title 
-with proper spelling and valid release year) in order to get the proper movie ID. 
+with proper spelling and valid release year, all inputs have no extra spaces before or after) 
+in order to get the proper movie ID. 
 
 1. Given a movie and the year of its release, a request is sent to the OMDb API to get 
  the movie ID for the IMDb site. Using the movie and movie title, this method then 
@@ -17,7 +14,9 @@ with proper spelling and valid release year) in order to get the proper movie ID
  enjoy a similar movie recommended by keyword. Not that this method only looks through
  20 keywords for a movie and 50 movies per keyword in order to reduce the runtime. Also 
  note that it is reliant on div class names to be the same on every keywords page for a 
- movie as well as the page for top movies in each keyword.
+ movie as well as the page for top movies in each keyword, and thus will not accomodate 
+ pages that aren't formatted the same. This assumption also extends to all other questions,
+ and thus will not be repeated. 
 
 2. Given a movie and the year of its release, a request is sent to the OMDb API to get 
  the movie ID for the IMDb site. Using the movie and movie title, this method then 
@@ -108,15 +107,21 @@ have to give it a mvoie where
 actress not just actor
 
 
+trimmed
 if statement for 
 
+release year matches what IMDb says
 
 
 delete print statements. check over them all
 
 
 
+assume valid input 
 
+feature film
+
+define colleague
 
 
 
