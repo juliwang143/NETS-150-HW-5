@@ -99,5 +99,16 @@ of the page for the given movie, and identifying the <a> element (if one exists)
 Ultimately, this project required a lot more examination of the webpages and being flexible to accomodate the
 different page formats. 
 
+User Manual: 
+
+TODO
+
+Work breakdown:
+Dora: Webscraping
+Dora: Main.java file + Interactive GUI
+Julia: OMDB setup
+Julia: Webscraping
+Dora: Polishing
+Julia: Polishing
 
 
