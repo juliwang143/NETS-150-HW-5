@@ -29,6 +29,8 @@ For social networks, we looked at different types of closure.
         factors, such as actor #1 and actor #2 working in the same movies with actor #3, or the fact that actors #1 and 
         actors #2 have limited 
 
+        // TODO
+
 
 
 
@@ -53,5 +55,16 @@ of the page for the given movie, and identifying the <a> element (if one exists)
 Ultimately, this project required a lot more examination of the webpages and being flexible to accomodate the
 different page formats. 
 
+User Manual: 
+
+TODO
+
+Work breakdown:
+Dora: Webscraping
+Dora: Main.java file + Interactive GUI
+Julia: OMDB setup
+Julia: Webscraping
+Dora: Polishing
+Julia: Polishing
 
 
