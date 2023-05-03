@@ -3,68 +3,74 @@ methods thus assume that there is a valid input to the OMDb API (capitalized mov
 with proper spelling and valid release year, all inputs have no extra spaces before or after) 
 in order to get the proper movie ID. 
 
-1. Given a movie and the year of its release, a request is sent to the OMDb API to get 
- the movie ID for the IMDb site. Using the movie and movie title, this method then 
- scrapes the given movie's keyword page to get its top 20 most relevant keywords. Then, 
- this method finds the top 50 movies under each keyword, incrementing the count for a 
- movie each time it is seen to a HashMap of counts. The 20 movies with the highest counts 
- (the 20 most commonly seen movies in the keywords of the given movie) are outputted as 
- movie recommendations. This assumes that movies with more keywords in common are more 
- similar and thus given that an individual enjoyed one of the movies, they are likely to 
- enjoy a similar movie recommended by keyword. Not that this method only looks through
- 20 keywords for a movie and 50 movies per keyword in order to reduce the runtime. Also 
- note that it is reliant on div class names to be the same on every keywords page for a 
- movie as well as the page for top movies in each keyword, and thus will not accomodate 
- pages that aren't formatted the same. This assumption also extends to all other questions,
- and thus will not be repeated. 
+Method Processes and Assumptions: 
 
-2. Given a movie and the year of its release, a request is sent to the OMDb API to get 
- the movie ID for the IMDb site. Using the movie and movie title, this method then 
- scrapes the page for the given movie on the IMDb site to get its top genres. Then, it 
- finds the top 50 movies under each genre, incrementing the count for a movie each time 
- it is seen to a HashMap of counts. The 20 movies with the highest counts (the 20 most 
- commonly seen movies in the genres of the given movie) are outputted as movie 
- recommendations. This assumes that movies with more genres in common are more similar 
- and thus given that an individual enjoyed one of the movies, they are likely to enjoy 
- a similar movie recommended by genre. Note that this method only looks at the top 50 
- movies for each genre in order to reduce runtime and is reliant on div class names to 
- be the same on every movie page as well as the page for top movies in each genre.
+    - Question 1. 
+        Given a movie and the year of its release, a request is sent to the OMDb API to get 
+        the movie ID for the IMDb site. Using the movie and movie title, this method then 
+        scrapes the given movie's keyword page to get its top 20 most relevant keywords. Then, 
+        this method finds the top 50 movies under each keyword, incrementing the count for a 
+        movie each time it is seen to a HashMap of counts. The 20 movies with the highest counts 
+        (the 20 most commonly seen movies in the keywords of the given movie) are outputted as 
+        movie recommendations. This assumes that movies with more keywords in common are more 
+        similar and thus given that an individual enjoyed one of the movies, they are likely to 
+        enjoy a similar movie recommended by keyword. Not that this method only looks through
+        20 keywords for a movie and 50 movies per keyword in order to reduce the runtime. Also 
+        note that it is reliant on div class names to be the same on every keywords page for a 
+        movie as well as the page for top movies in each keyword, and thus will not accomodate 
+        pages that aren't formatted the same. This assumption also extends to all other questions,
+        and thus will not be repeated. 
 
-5. Given a movie and the year of its release, a request is sent to the OMDb API to get 
- the movie ID for the IMDb site. Using the movie and movie title, this method scrapes 
- the full credits page of a given movie on the IMDb site to get the directors for that 
- movie. Then, for each director, the method finds all movies a director has directed and 
- gets the average rating of all such movies. The method also find the highest rated movie 
- directed by each director and outputs that as well. This is done by storing the sum of 
- all ratings for a specific director as well as a count for how many movies that director 
- has directed. The IMDB site, however, only shows the first 15 items in an unexpanded list, 
- so only the movies in the first 15 list items are considered. Note that some of these items
- can be TV shows, shorts, or music videos which are all not considered in the average rating. 
- Additionally, this method is reliant on div class names to be the same on every full 
- credits page for a movie as well as the page for each director. A rating of 0.0 will be
- returned for a director who has no directed movies (which can occur with some assistant 
- or so-directors). This method assumes that movies do not have "TV", "Short", or "Video" 
- in a dierctor's position if it is written under the movie on a director's page as the 
- absence of such text is how an item is determined to be a movie. Note that for the 
- rating of each movie, the User Ratings page is accessed through
- https://www.imdb.com/title/{movieID}/ratings/. This page, however, will frequently
- access a Ratings page rather than a User Ratings page seemingly at random so a while 
- loop was implemented to ensure that the correct page is accessed. 
+    - Question 2. 
+        Given a movie and the year of its release, a request is sent to the OMDb API to get 
+        the movie ID for the IMDb site. Using the movie and movie title, this method then 
+        scrapes the page for the given movie on the IMDb site to get its top genres. Then, it 
+        finds the top 50 movies under each genre, incrementing the count for a movie each time 
+        it is seen to a HashMap of counts. The 20 movies with the highest counts (the 20 most 
+        commonly seen movies in the genres of the given movie) are outputted as movie 
+        recommendations. This assumes that movies with more genres in common are more similar 
+        and thus given that an individual enjoyed one of the movies, they are likely to enjoy 
+        a similar movie recommended by genre. Note that this method only looks at the top 50 
+        movies for each genre in order to reduce runtime and is reliant on div class names to 
+        be the same on every movie page as well as the page for top movies in each genre.
 
-7. Given a movie, the year of its release, the user's gender, and the user's age, a request 
- is sent to the OMDb API to get movie's the movie ID for the IMDb site. Using the movie ID, 
- this method scrapes the User Ratings page of a given movie on the IMDb site to the rating 
- for a specific demographic. The method then gets the correct row and column from a table of 
- ratings for different ages and genders. Negative values are considered <18 and any ages over 
- 44 would fall under the 45+ category. Any input other than Male/Female for the gender will 
- output the average rating for a specific age for males and females combined. This method
- is reliant on div class names to be the same for ever User Ratings page and the consistent
- formatting of the ratings table with ages and genders. This method also assumes that the 
- inputs for age and gender are valid, specifically that the gender is Male or Female (capitalized)
- and the age is an integer. Additionally, note that for the rating of each movie, the User 
- Ratings page is accessed through https://www.imdb.com/title/{movieID}/ratings/. This page, 
- however, will frequently access a Ratings page rather than a User Ratings page seemingly at 
- random so a while loop was implemented to ensure that the correct page is accessed. 
+    - Question 5. 
+        Given a movie and the year of its release, a request is sent to the OMDb API to get 
+        the movie ID for the IMDb site. Using the movie and movie title, this method scrapes 
+        the full credits page of a given movie on the IMDb site to get the directors for that 
+        movie. Then, for each director, the method finds all movies a director has directed and 
+        gets the average rating of all such movies. The method also find the highest rated movie 
+        directed by each director and outputs that as well. This is done by storing the sum of 
+        all ratings for a specific director as well as a count for how many movies that director 
+        has directed. The IMDB site, however, only shows the first 15 items in an unexpanded list, 
+        so only the movies in the first 15 list items are considered. Note that some of these items
+        can be TV shows, shorts, or music videos which are all not considered in the average rating. 
+        Additionally, this method is reliant on div class names to be the same on every full 
+        credits page for a movie as well as the page for each director. A rating of 0.0 will be
+        returned for a director who has no directed movies (which can occur with some assistant 
+        or so-directors). This method assumes that movies do not have "TV", "Short", or "Video" 
+        in a dierctor's position if it is written under the movie on a director's page as the 
+        absence of such text is how an item is determined to be a movie. Note that for the 
+        rating of each movie, the User Ratings page is accessed through
+        https://www.imdb.com/title/{movieID}/ratings/. This page, however, will frequently
+        access a Ratings page rather than a User Ratings page seemingly at random so a while 
+        loop was implemented to ensure that the correct page is accessed. 
+
+    - Question 7. 
+        Given a movie, the year of its release, the user's gender, and the user's age, a request 
+        is sent to the OMDb API to get movie's the movie ID for the IMDb site. Using the movie ID, 
+        this method scrapes the User Ratings page of a given movie on the IMDb site to the rating 
+        for a specific demographic. The method then gets the correct row and column from a table of 
+        ratings for different ages and genders. Negative values are considered <18 and any ages over 
+        44 would fall under the 45+ category. Any input other than Male/Female for the gender will 
+        output the average rating for a specific age for males and females combined. This method
+        is reliant on div class names to be the same for ever User Ratings page and the consistent
+        formatting of the ratings table with ages and genders. This method also assumes that the 
+        inputs for age and gender are valid, specifically that the gender is Male or Female (capitalized)
+        and the age is an integer. Additionally, note that for the rating of each movie, the User 
+        Ratings page is accessed through https://www.imdb.com/title/{movieID}/ratings/. This page, 
+        however, will frequently access a Ratings page rather than a User Ratings page seemingly at 
+        random so a while loop was implemented to ensure that the correct page is accessed. 
 
 Only look at previous movies for an actor, not upcoming movies
 

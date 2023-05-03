@@ -35,7 +35,8 @@ public class Main {
                     "\n6. Given two actors, find movies they've worked in before. If they haven't worked in movies before, output that they have not worked in the same movies together before. " +
                     "\n7. Given a user's age, gender, and a movie, find the average rating from other users in that same demographic for the given movie." + 
                     "\n8. Given an actor and a movie they've acted in before, find the actors who he/she have worked with more than once.");
-            String number = sc.nextLine();
+            
+                    String number = sc.nextLine();
             if (number.equals("1")) {
                 System.out.print("Enter a movie title: ");
                 String title = sc.nextLine();

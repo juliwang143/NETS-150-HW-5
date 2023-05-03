@@ -21,15 +21,61 @@ For document search, our application webscrapes IMDB pages for a particular movi
 similar movies by examining the page for that movie's attributes.
 
 For social networks, we looked at different types of closure. 
-    - For the question:
-        Given an actor and a movie they've acted in, as well as another actor and a movie they've acted in, find the actors who both actors have worked with.
 
-        We consider the two given actors, actor #1 and actor #2. Actors who both actor #1 and actor #2 have worked with, let 
-        them be called Actor #3, will more likely have worked together before. This can be because of many different
-        factors, such as actor #1 and actor #2 working in the same movies with actor #3, or the fact that actors #1 and 
-        actors #2 have limited 
+    - Triadic Closure
 
+        - Question 4: Given an actor and a movie they've acted in, as well as another actor and a movie 
+          they've acted in, find the actors who both actors have worked with.
+                We consider the two given actors, actor #1 and actor #2. Actors who both actor #1 and actor #2 have worked with, let 
+                them be called Actor #3, will more likely have worked together before. This can be because of many different
+                factors, such as actor #1 and actor #2 working in the same movies with actor #3, or the fact that actors #1 and 
+                actors #2 have limited 
 
+    - Membership Closure
+
+        // SOS this is kind of a stretch.... pls take a look / finish it
+        // SOS this is kind of a stretch.... pls take a look / finish it
+        // SOS this is kind of a stretch.... pls take a look / finish it
+        - Question 6: Given two actors, find movies they've worked in before. If they haven't worked in movies 
+          before, output that they have not worked in the same movies together before.
+                In this social network with actors as people and movies as foci, we are looking for movies 
+                that two given actors have been in. Let one actor be Actor #1 and the other actor be Actor #2. 
+                Let there be a relationship between the two as the user is interested in both actors and, since 
+                an actor being in a movie is a relationship between the two, consider the relationships between 
+                Actor #1 and all movies they have starred in. In order to find the movies that both actors have 
+                worked in before, we are looking for all of the movies Actor #1 
+                \\((actually this doesn't make sense SOS))
+
+    - Focal Closure
+        
+        //TBH this is kind of iffy too but its better? idk :T
+        //TBH this is kind of iffy too but its better? idk :T
+        //TBH this is kind of iffy too but its better? idk :T
+        - Question 8: Given an actor and a movie they've acted in before, find the actors who he/she have 
+          worked with more than once.
+                In these social network with actors as people and movies as foci, we are looking for actors
+                who have been in the same movie. Consider an actor who is in a movie and let this actor be 
+                Actor #1. There is a relationship between Actor #1 and the movie since Actor #1 is a part 
+                of that movie. The movie also has relationships with other actors who starred in the movie 
+                as well. Consider an arbitrary second actor in the same movie and let this actor be Actor 
+                #2. Since there is a relationship between Actor #1 and the movie and a relationship between 
+                the movie and Actor #2, there is a good chance of Actor #1 and Actor #2 having a relationship 
+                as they have worked in the same movie, showing foci closure since Actor #1 and Actor #2 have 
+                a foci in common, which is the movie they both starred in. 
+
+    - Additional Notes on Closure
+        - Using similar concepts to triadic closure, focal closure, and membership closure in a non-social 
+          affiliation network, we can see that some of our other questions also involve the relationship 
+          between nodes and the establishments of new relationships due to closure. For example, in questions 
+          1 and 2, we are using movies and keywords/genres respectively as nodes and giving recommendations 
+          based on closure of relationships between movies. A given movie has a relationship to all of its 
+          keywords/genres and these keywords/genres also have relationships with the movies that fall into 
+          that keyword/genre. Thus, we can use closure to consider the relationship between two movies with 
+          the same keyword/genre as they share a 'foci' of the keyword/genre they both belong to. Using this 
+          idea, if you enjoy one movie and the keyword/genre it is in, you are likely to like another movie 
+          in the same keyword/genre. Questions 1 and 2 implement this and find movies with the most shared 
+          keywords/genres in order to find the most similar movies, and thus the best recommendations for a 
+          user who has enjoyed a given movie.
 
 
 This is different than other homeworks we've implemented before, as it builds our own recommendations,
